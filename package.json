@@ -1,0 +1,9 @@
+{
+  "name": "cv-digitale-federico",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CV digitale / portfolio personale — sito statico",
+  "scripts": {
+    "dev": "npx serve ."
+  }
+}
