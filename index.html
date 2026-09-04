@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Accesso — CV Federico Cambarau</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231c1c1b'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23f5f3ed' font-family='Arial' font-weight='700'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="login" id="login">
+  <form class="login-box" id="login-form" autocomplete="off">
+    <div class="section-kicker login-kicker">CV Digitale</div>
+    <h1 class="login-title">Inserisci la password<br><em>per accedere.</em></h1>
+    <input class="login-input" type="password" id="password" name="password" inputmode="numeric" aria-label="Password" placeholder="Password" autofocus>
+    <button class="login-btn" type="submit">Accedi</button>
+    <p class="login-error" id="login-error" role="alert" hidden>Password non corretta. Riprova.</p>
+  </form>
+</main>
+
+<script>
+// ============================================================
+// Password di accesso al CV — modifica SOLO questo valore.
+// Nota: protezione lato frontend, non è sicurezza reale.
+// ============================================================
+var ACCESS_PASSWORD = '1002';
+
+(function(){
+  var form = document.getElementById('login-form');
+  var input = document.getElementById('password');
+  var error = document.getElementById('login-error');
+  var overlay = document.getElementById('login');
+
+  if(sessionStorage.getItem('cv_auth') === '1'){
+    location.replace('cv.html');
+    return;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(input.value === ACCESS_PASSWORD){
+      sessionStorage.setItem('cv_auth', '1');
+      overlay.classList.add('unlocked');
+      setTimeout(function(){ location.replace('cv.html'); }, 480);
+    } else {
+      error.hidden = false;
+      overlay.classList.remove('shake');
+      void overlay.offsetWidth;
+      overlay.classList.add('shake');
+      input.value = '';
+      input.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
