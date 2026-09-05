@@ -227,7 +227,20 @@
 <footer class="footer"><span>© 2026 FEDERICO CAMBARAU</span><span>CV / PORTFOLIO PERSONALE</span></footer>
 </main>
 
+</main>
+
 <script>
+// Protezione contenuti: selezione testo e drag disabilitati (il CV resta comunque visionabile nel sorgente pagina).
+document.addEventListener('selectstart', function(e){
+  if(!e.target.closest || !e.target.closest('input, textarea')) e.preventDefault();
+});
+document.addEventListener('dragstart', function(e){
+  if(e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
+});
+document.addEventListener('contextmenu', function(e){
+  if(e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault();
+});
+
 document.querySelectorAll('.row-toggle').forEach(function(btn){
   btn.addEventListener('click', function(){
     var row = btn.closest('.row');
@@ -347,7 +360,7 @@ function fallbackCopy(text, done){
     if(isVideo){
       el = document.createElement('video');
       el.muted = true; el.loop = true; el.playsInline = true;
-      el.preload = 'metadata';
+      el.preload = 'none';
       el.setAttribute('muted',''); el.setAttribute('loop',''); el.setAttribute('playsinline','');
     } else {
       el = document.createElement('img');
@@ -405,6 +418,7 @@ function fallbackCopy(text, done){
     g.querySelectorAll('video').forEach(function(v){
       var p = v.play();
       if(p && p.catch) p.catch(function(){});
+      v.addEventListener('loadeddata', function(){ v.play(); }, {once:true});
     });
     var startAt = parseInt(g.getAttribute('data-start'), 10);
     if(startAt > 1 && g.children[startAt - 1]){
@@ -430,19 +444,25 @@ function fallbackCopy(text, done){
       start();
     }
     if(window.fetch){
-      fetch(folder)
-        .then(function(r){ return r.ok ? r.text() : ''; })
-        .then(function(html){
-          var files = [];
-          if(html){
-            var re = /href="([^"]+\.(?:jpe?g|png|webp|avif|gif|svg|mp4|webm|mov|m4v))"/gi, m;
-            while((m = re.exec(html)) !== null) files.push(decodeName(m[1]));
+      fetch(folder + 'manifest.json', {cache:'no-cache'})
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(data){
+          var files = (data && data.files) ? data.files : [];
+          if(!files.length){
+            return fetch(folder)
+              .then(function(r){ return r.ok ? r.text() : ''; })
+              .then(function(html){
+                if(html){
+                  var re = /href="([^"]+\.(?:jpe?g|png|webp|avif|gif|svg|mp4|webm|mov|m4v))"/gi, m;
+                  while((m = re.exec(html)) !== null) files.push(decodeName(m[1]));
+                }
+                return files;
+              });
           }
-          build(g, folder, files);
+          return files;
         })
-        .catch(function(){
-          build(g, folder, []);
-        });
+        .then(function(files){ build(g, folder, files); })
+        .catch(function(){ build(g, folder, []); });
     }
   });
 })();
