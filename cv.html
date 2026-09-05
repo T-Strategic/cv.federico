@@ -330,7 +330,7 @@ function fallbackCopy(text, done){
     if(isVideo){
       el = document.createElement('video');
       el.muted = true; el.loop = true; el.playsInline = true;
-      el.preload = 'none';
+      el.preload = 'metadata';
       el.setAttribute('muted',''); el.setAttribute('loop',''); el.setAttribute('playsinline','');
     } else {
       el = document.createElement('img');
@@ -385,11 +385,26 @@ function fallbackCopy(text, done){
         g.appendChild(mediaEl(src, VID.test(file)));
       }
     });
-    g.querySelectorAll('video').forEach(function(v){
-      var p = v.play();
-      if(p && p.catch) p.catch(function(){});
-      v.addEventListener('loadeddata', function(){ v.play(); }, {once:true});
-    });
+    if('IntersectionObserver' in window){
+      var vio = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(en.isIntersecting){
+            if(en.target.paused){
+              var p = en.target.play();
+              if(p && p.catch) p.catch(function(){});
+            }
+          } else {
+            en.target.pause();
+          }
+        });
+      }, {threshold:0.25});
+      g.querySelectorAll('video').forEach(function(v){ vio.observe(v); });
+    } else {
+      g.querySelectorAll('video').forEach(function(v){
+        var p = v.play();
+        if(p && p.catch) p.catch(function(){});
+      });
+    }
     var startAt = parseInt(g.getAttribute('data-start'), 10);
     if(startAt > 1 && g.children[startAt - 1]){
       var half = g.scrollWidth / 2;
