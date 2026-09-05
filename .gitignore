@@ -6,3 +6,10 @@ node_modules/
 *.log
 assets/images/gallery1/
 assets/images/gallery2/
+
+# Materiali di lavoro non destinati al sito pubblico
+cv.txt/
+agents.md
+
+# Il CV in PDF non deve mai essere pubblicato
+*.pdf

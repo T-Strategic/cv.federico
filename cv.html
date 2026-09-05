@@ -4,15 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Federico Cambarau — Tecnico Show & Visual Designer. Lighting, video, LED e live show, con specializzazione in software, AI e nuove tecnologie.">
+<meta name="robots" content="noindex, nofollow">
 <script>if(sessionStorage.getItem('cv_auth') !== '1'){ location.replace('index.html'); }</script>
 <title>Federico Cambarau — Light · Video · Technology</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231c1c1b'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23f5f3ed' font-family='Arial' font-weight='700'%3EF%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="fab">
-  <a class="print-btn" href="assets/CV-Federico-Cambarau.pdf" download>Scarica PDF ↓</a>
-</div>
 <header class="wrap nav">
   <div class="brand">FEDERICO CAMBARAU</div>
   <nav class="nav-links" aria-label="Sezioni del CV">
@@ -216,8 +214,8 @@
   <p class="contact-lead">Visual designer con esperienza nella produzione e gestione di live show, e una recente specializzazione in software, AI e nuove tecnologie.</p>
   <p class="contact-label">Per contatti professionali:</p>
   <div class="email-row">
-    <a class="email" href="mailto:meliscambarau@gmail.com">meliscambarau@gmail.com ↗</a>
-    <button class="copy-btn" type="button" data-copy="meliscambarau@gmail.com" aria-label="Copia indirizzo email">
+    <a class="email" id="email-link" aria-label="Email professionale">Email ↗</a>
+    <button class="copy-btn" type="button" aria-label="Copia indirizzo email">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
       </svg>
@@ -225,8 +223,6 @@
   </div>
 </section>
 <footer class="footer"><span>© 2026 FEDERICO CAMBARAU</span><span>CV / PORTFOLIO PERSONALE</span></footer>
-</main>
-
 </main>
 
 <script>
@@ -281,44 +277,18 @@ document.addEventListener('click', function(){
 
 (function loadProfilePhoto(){
   var img = document.querySelector('.hero-photo');
-  var folder = 'assets/images/Foto profilo/';
-  var exts = ['jpg','jpeg','png','webp','avif','gif'];
-  function show(src){
-    img.src = src;
-    img.hidden = false;
-  }
-  function probe(names){
-    var queue = names.slice();
-    (function next(){
-      if(!queue.length) return;
-      var src = queue.shift();
-      var test = new Image();
-      test.onload = function(){ show(src); };
-      test.onerror = next;
-      test.src = src;
-    })();
-  }
-  var fallbackNames = ['profile','profilo','foto','foto-profilo','photo','avatar','federico','me','io'];
-  var candidates = [];
-  fallbackNames.forEach(function(n){ exts.forEach(function(e){ candidates.push(folder + n + '.' + e); }); });
-  function tryFallback(){ probe(candidates); }
-  if(window.fetch){
-    fetch(folder)
-      .then(function(r){ return r.ok ? r.text() : ''; })
-      .then(function(html){
-        var found = [];
-        if(html){
-          var re = /href="([^"]+\.(?:jpe?g|png|webp|avif|JPE?G|PNG|WEBP|AVIF))"/g, m;
-          while((m = re.exec(html)) !== null){
-            try { found.push(folder + decodeURIComponent(m[1]).split(/[\\/]/).pop()); } catch(err) {}
-          }
-        }
-        if(found.length){ show(found[0]); }
-      })
-      .catch(tryFallback);
-  } else {
-    tryFallback();
-  }
+  img.onload = function(){ img.hidden = false; };
+  img.src = 'assets/images/Foto%20profilo/profile.jpg';
+})();
+
+// L'indirizzo è assemblato a runtime per ridurre la raccolta automatica da parte dei bot.
+// Non è una protezione assoluta: resta visibile e utilizzabile per chiunque apra il sito.
+(function initEmail(){
+  var email = String.fromCharCode(109,101,108,105,115,99,97,109,98,97,114,97,117) + ['@','gmail','.','com'].join('');
+  var link = document.getElementById('email-link');
+  link.textContent = email + ' \u2197';
+  link.href = 'mailto:' + email;
+  document.querySelector('.copy-btn').setAttribute('data-copy', email);
 })();
 
 document.querySelectorAll('.copy-btn').forEach(function(btn){

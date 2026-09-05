@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "description": "CV digitale / portfolio personale — sito statico",
   "scripts": {
-    "dev": "npx serve ."
+    "dev": "npx serve@14 ."
   }
 }
